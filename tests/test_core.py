@@ -1,6 +1,6 @@
 import unittest
 
-from golem import exc, mock_method, atLeast, atMost, Return, Invoke, _
+from golem import exc, mock_method, AtLeast, AtMost, Return, Invoke, _
 from golem.core import Expectation
 
 
@@ -104,33 +104,33 @@ class TestMockMethod(unittest.TestCase):
         self.iface.bar.assertSaturated()
 
     def test_ifMustBeCalledAtLeastTwice_failsIfCalledOnce(self):
-        self.iface.bar.expectCall().times(atLeast(2))
+        self.iface.bar.expectCall().times(AtLeast(2))
         self.iface.bar()
         with self.assertRaisesRegexp(exc.MockUndersaturatedError, "Undersaturated mock function Interface.bar\(\):\nActual: called once\nExpected: to be called at least twice"):
             self.iface.bar.assertSaturated()
 
     def test_ifMustBeCalledAtLeastTwice_passesIfCalledTwice(self):
-        self.iface.bar.expectCall().times(atLeast(2))
+        self.iface.bar.expectCall().times(AtLeast(2))
         self.iface.bar()
         self.iface.bar()
         self.iface.bar.assertSaturated()
 
     def test_ifMustBeCalledAtLeastZeroTimes_passesEvenIfNotCalled(self):
-        self.iface.bar.expectCall().times(atLeast(0))
+        self.iface.bar.expectCall().times(AtLeast(0))
         self.iface.bar.assertSaturated()
 
     def test_ifMustBeCalledAtMostOnce_failsIfCalledTwice(self):
-        self.iface.bar.expectCall().times(atMost(1))
+        self.iface.bar.expectCall().times(AtMost(1))
         self.iface.bar()
         with self.assertRaisesRegexp(exc.MockOversaturatedError, "Oversaturated mock function Interface.bar\(\):\nActual: called twice\nExpected: to be called at most once"):
             self.iface.bar()
 
     def test_ifMustBeCalledAtMostOnce_passesIfNeverCalled(self):
-        self.iface.bar.expectCall().times(atMost(1))
+        self.iface.bar.expectCall().times(AtMost(1))
         self.iface.bar.assertSaturated()
 
     def test_ifMustBeCalledAtMostOnce_passesIfCalledOnce(self):
-        self.iface.bar.expectCall().times(atMost(1))
+        self.iface.bar.expectCall().times(AtMost(1))
         self.iface.bar()
         self.iface.bar.assertSaturated()
 

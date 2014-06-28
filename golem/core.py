@@ -3,7 +3,7 @@ import warnings
 import collections
 
 from golem import exc
-from golem.times import exactly, atLeast
+from golem.times import Exactly, AtLeast
 
 
 class mock_method(object):
@@ -92,7 +92,7 @@ class MockMethodCall(object):
 class Expectation(object):
 
     def __init__(self):
-        self._times = exactly(1)
+        self._times = Exactly(1)
         self._single_actions = collections.deque()
         self._repeatable_action = None
 
@@ -112,17 +112,17 @@ class Expectation(object):
 
     def times(self, times):
         if isinstance(times, int):
-            self._times = exactly(times)
+            self._times = Exactly(times)
         else:
             self._times = times
 
     def willOnce(self, action):
         self._single_actions.append(action)
-        self._times = exactly(len(self._single_actions))
+        self._times = Exactly(len(self._single_actions))
         return self
 
     def willRepeatedly(self, action):
-        self._times = atLeast(len(self._single_actions))
+        self._times = AtLeast(len(self._single_actions))
         self._repeatable_action = action
 
     def is_undersaturated(self):

@@ -12,7 +12,7 @@ class TimesBase(object):
         return self
 
 
-class exactly(TimesBase):
+class Exactly(TimesBase):
 
     def __str__(self):
         if self.expected == 0:
@@ -30,7 +30,7 @@ class exactly(TimesBase):
         return self.expected < self.actual
 
 
-class atLeast(TimesBase):
+class AtLeast(TimesBase):
 
     def __str__(self):
         return 'to be called at least %s' % utils.number_of_times_to_string(self.expected)
@@ -42,7 +42,7 @@ class atLeast(TimesBase):
         return False
 
 
-class atMost(TimesBase):
+class AtMost(TimesBase):
 
     def __str__(self):
         return 'to be called at most %s' % utils.number_of_times_to_string(self.expected)
