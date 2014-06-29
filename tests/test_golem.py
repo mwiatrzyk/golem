@@ -4,7 +4,7 @@ from golem import exc, mock_method, AtLeast, AtMost, Return, Invoke, _
 from golem.core import Expectation
 
 
-class TestMockMethod(unittest.TestCase):
+class TestGolem(unittest.TestCase):
 
     def setUp(self):
 
