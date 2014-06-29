@@ -1,8 +1,10 @@
 import warnings
+import functools
 import collections
 
 from golem import exc
 from golem.times import Exactly, AtLeast
+from golem.utils import FunctionInspector
 
 
 class mock_method(object):
@@ -19,6 +21,7 @@ class MockMethod(object):
     def __init__(self, obj, func):
         self.obj = obj
         self.func = func
+        self.inspect = FunctionInspector(func)
 
     def __call__(self, *args, **kwargs):
         call = MockMethodCall(self, args, kwargs)
@@ -86,6 +89,9 @@ class MockMethodCall(object):
 
     def __repr__(self):
         return str(self)
+
+    def get_normalized_args(self):
+        return self.method.inspect.normalize(self.method.obj, *self.args, **self.kwargs)
 
 
 class Expectation(object):

@@ -14,3 +14,13 @@ class Invoke(object):
 
     def __call__(self, call):
         return self.callback(*call.args, **call.kwargs)
+
+
+class SaveAllArgs(object):
+
+    def __init__(self, dest):
+        self.dest = dest
+
+    def __call__(self, call):
+        for k, v in call.get_normalized_args().iteritems():
+            setattr(self.dest, k, v)

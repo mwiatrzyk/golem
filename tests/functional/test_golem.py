@@ -1,7 +1,8 @@
 import unittest
 
 from golem import exc, mock_method, AtLeast, AtMost, Return, Invoke, _
-from golem.core import Expectation
+from golem.helpers import ArgStorage
+from golem.actions import SaveAllArgs
 
 
 class TestGolem(unittest.TestCase):
@@ -190,3 +191,14 @@ class TestGolem(unittest.TestCase):
         self.iface.bar.expectCall().willOnce(Return(1)).willRepeatedly(Return(2))
         with self.assertRaisesRegexp(exc.MockUndersaturatedError, "Undersaturated mock function Interface.bar\(\):\nActual: never called\nExpected: to be called at least once"):
             self.iface.bar.assertSaturated()
+
+    def test_ifExpectingToOnceSaveArgsInGivenObject_saveItIfSatisfied(self):
+        args = ArgStorage()
+        self.iface.foo.expectCall(1, 2).willOnce(SaveAllArgs(args))
+        self.iface.foo(1, 2)
+        self.iface.foo.assertSaturated()
+
+        self.assertEqual(1, args.a)
+        self.assertEqual(2, args.b)
+        self.assertEqual(1, args.c)
+        self.assertEqual(None, args.d)
