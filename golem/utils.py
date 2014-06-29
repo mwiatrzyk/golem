@@ -18,27 +18,48 @@ class FunctionInspector(object):
         self.func = func
         self._argspec = inspect.getargspec(func)
 
-    def decode_call(self, *args, **kwargs):
-        spec = inspect.getargspec(self.func)
-        spec_args = spec.args[1:]
-        spec_defaults = spec.defaults or []
-        required_args = spec_args[:-len(spec_defaults)] if spec_defaults else spec_args
+    def normalize(self, *args, **kwargs):
         for k in kwargs:
-            if k not in spec_args:
+            if k not in self.arg_names:
                 raise TypeError("%s() got an unexpected keyword argument %r" % (self.func.func_name, k))
-        if args and not spec_args:
+        if args and not self.arg_names:
             raise TypeError("%s() takes no arguments (%d given)" % (self.func.func_name, len(args)))
-        elif len(args) > len(spec_args):
-            raise TypeError(self.__render_invalid_number_of_args_message(args, required_args, spec_defaults))
-        elif len(args) != len(required_args):
-            raise TypeError(self.__render_invalid_number_of_args_message(args, required_args, spec_defaults))
+        elif len(args) > len(self.arg_names):
+            raise TypeError(self.__render_invalid_number_of_args_message(args))
+        elif len(args) != len(self.arg_names_required):
+            raise TypeError(self.__render_invalid_number_of_args_message(args))
 
-    def __render_invalid_number_of_args_message(self, given, required, default):
+    def __render_invalid_number_of_args_message(self, given):
         tmp = ["%s() takes" % self.func.func_name]
-        if default and len(given) > len(required) + len(default):
-            tmp.append('at most %d' % (len(required) + len(default)))
+        if self.min_args != self.max_args and len(given) > self.max_args:
+            tmp.append('at most %d' % self.max_args)
         else:
-            tmp.append(('at least %d' if default else 'exactly %d') % len(required))
-        tmp.append('argument' if len(required) == 1 else 'arguments')
+            tmp.append(('at least %d' if self.min_args != self.max_args else 'exactly %d') % self.min_args)
+        tmp.append('argument' if self.min_args == 1 else 'arguments')
         tmp.append("(%d given)" % len(given))
         return ' '.join(tmp)
+
+    @property
+    def arg_names(self):
+        return tuple(self._argspec.args)
+
+    @property
+    def arg_names_required(self):
+        if not self.arg_defaults:
+            return self.arg_names
+        return self.arg_names[:-len(self.arg_defaults)]
+
+    @property
+    def arg_defaults(self):
+        if not self._argspec.defaults:
+            return {}
+        default_arg_names = self.arg_names[-len(self._argspec.defaults):]
+        return dict(zip(default_arg_names, self._argspec.defaults))
+
+    @property
+    def min_args(self):
+        return len(self.arg_names_required)
+
+    @property
+    def max_args(self):
+        return len(self.arg_names)
