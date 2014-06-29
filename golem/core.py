@@ -29,7 +29,7 @@ class MockMethod(object):
         expectation = self.expectations.get(call)
         if expectation is None:
             raise exc.UnexpectedMockCallError(call)
-        result = expectation.consume(*args, **kwargs)
+        result = expectation.consume(call)
         if expectation.is_oversaturated():
             raise exc.MockOversaturatedError(call, expectation)
         return result
@@ -96,11 +96,11 @@ class Expectation(object):
         self._single_actions = collections.deque()
         self._repeatable_action = None
 
-    def consume(self, *args, **kwargs):
+    def consume(self, call):
         self._times += 1
         action = self.__consume_action()
         if action is not None:
-            return action(*args, **kwargs)
+            return action(call)
 
     def __consume_action(self):
         if self._single_actions:
