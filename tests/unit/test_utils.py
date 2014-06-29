@@ -1,6 +1,6 @@
 import unittest
 
-from golem.utils import FunctionInspector
+from golem._utils import FunctionInspector
 
 
 class TestFunctionInspector(unittest.TestCase):

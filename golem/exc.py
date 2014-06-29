@@ -1,4 +1,4 @@
-from golem import utils
+from golem import _utils
 
 
 class GolemWarning(Warning):
@@ -34,7 +34,7 @@ class MockSaturationError(AssertionError):
         if self.expectation.actual_calls == 0:
             return 'never called'
         else:
-            return 'called %s' % utils.number_of_times_to_string(self.expectation.actual_calls)
+            return 'called %s' % _utils.number_of_times_to_string(self.expectation.actual_calls)
 
     @property
     def expected_calls(self):

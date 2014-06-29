@@ -1,8 +1,10 @@
 import unittest
 
-from golem import exc, mock_method, AtLeast, AtMost, Return, Invoke, _
+from golem import exc, mock_method
+from golem.times import AtLeast, AtMost
 from golem.helpers import ArgStorage
-from golem.actions import SaveAllArgs
+from golem.actions import Return, Invoke, SaveAllArgs
+from golem.matchers import _
 
 
 class TestGolem(unittest.TestCase):

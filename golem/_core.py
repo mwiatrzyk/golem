@@ -2,9 +2,8 @@ import warnings
 import functools
 import collections
 
-from golem import exc
+from golem import exc, _utils
 from golem.times import Exactly, AtLeast
-from golem.utils import FunctionInspector
 
 
 class mock_method(object):
@@ -21,7 +20,7 @@ class MockMethod(object):
     def __init__(self, obj, func):
         self.obj = obj
         self.func = func
-        self.inspect = FunctionInspector(func)
+        self.inspect = _utils.FunctionInspector(func)
 
     def __call__(self, *args, **kwargs):
         call = MockMethodCall(self, args, kwargs)

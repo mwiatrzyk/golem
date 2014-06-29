@@ -1,4 +1,4 @@
-from golem import utils
+from golem import _utils
 
 
 class TimesBase(object):
@@ -18,7 +18,7 @@ class Exactly(TimesBase):
         if self.expected == 0:
             return 'to be never called'
         else:
-            return 'to be called %s' % utils.number_of_times_to_string(self.expected)
+            return 'to be called %s' % _utils.number_of_times_to_string(self.expected)
 
     def __eq__(self, other):
         return self.expected == other
@@ -33,7 +33,7 @@ class Exactly(TimesBase):
 class AtLeast(TimesBase):
 
     def __str__(self):
-        return 'to be called at least %s' % utils.number_of_times_to_string(self.expected)
+        return 'to be called at least %s' % _utils.number_of_times_to_string(self.expected)
 
     def is_undersaturated(self):
         return self.expected > self.actual
@@ -45,7 +45,7 @@ class AtLeast(TimesBase):
 class AtMost(TimesBase):
 
     def __str__(self):
-        return 'to be called at most %s' % utils.number_of_times_to_string(self.expected)
+        return 'to be called at most %s' % _utils.number_of_times_to_string(self.expected)
 
     def is_undersaturated(self):
         return False
