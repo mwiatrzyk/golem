@@ -74,3 +74,7 @@ class TestFunctionInspector(unittest.TestCase):
         uut = FunctionInspector(self.spam)
         with self.assertRaisesRegexp(TypeError, "spam\(\) takes at most 3 arguments \(4 given\)"):
             uut.normalize(1, 2, 3, 4)
+
+    def test_ifDecodingMixedPositionalAndKeywordArguments_normalizationSucceeds(self):
+        uut = FunctionInspector(self.baz)
+        self.assertEqual({'a': 1, 'b': 2}, uut.normalize(1, b=2))
