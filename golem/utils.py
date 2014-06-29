@@ -27,6 +27,10 @@ class FunctionInspector(object):
         for k in kwargs:
             if k not in self.arg_names:
                 raise TypeError("%s() got an unexpected keyword argument %r" % (self.func.func_name, k))
+        if len(args) == len(self.arg_names_required):
+            for k in kwargs:
+                if k in self.arg_names_required:
+                    raise TypeError("%s() got multiple values for keyword argument %r" % (self.func.func_name, k))
         if args and not self.arg_names:
             raise TypeError("%s() takes no arguments (%d given)" % (self.func.func_name, len(args)))
         elif given > len(self.arg_names):

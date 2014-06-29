@@ -78,3 +78,8 @@ class TestFunctionInspector(unittest.TestCase):
     def test_ifDecodingMixedPositionalAndKeywordArguments_normalizationSucceeds(self):
         uut = FunctionInspector(self.baz)
         self.assertEqual({'a': 1, 'b': 2}, uut.normalize(1, b=2))
+
+    def test_ifOverridingPositionalArgumentWithKeywordArgument_TypeErrorIsRaised(self):
+        uut = FunctionInspector(self.bar)
+        with self.assertRaisesRegexp(TypeError, "bar\(\) got multiple values for keyword argument 'a'"):
+            uut.normalize(1, a=1)
