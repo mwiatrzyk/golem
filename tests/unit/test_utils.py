@@ -1,52 +1,53 @@
 import unittest
 
-from golem.core import MockMethod
+from golem.utils import FunctionInspector
 
 
-class TestMockMethod(unittest.TestCase):
+class TestFunctionInspector(unittest.TestCase):
 
     def setUp(self):
 
-        class Interface(object):
+        def foo(self):
+            pass
 
-            def foo(self):
-                pass
+        def bar(self, a):
+            pass
 
-            def bar(self, a):
-                pass
+        def baz(self, a, b):
+            pass
 
-            def baz(self, a, b):
-                pass
+        def spam(self, a, b, c=None):
+            pass
 
-            def spam(self, a, b, c=None):
-                pass
-
-        self.Interface = Interface
+        self.foo = foo
+        self.bar = bar
+        self.baz = baz
+        self.spam = spam
 
     def test_ifFunctionTakesNoParameters_decodeRaisesTypeErrorIfCalledWithOne(self):
-        uut = MockMethod(self.Interface(), self.Interface.foo)
-        with self.assertRaisesRegexp(TypeError, "Interface.foo\(\) takes no arguments \(1 given\)"):
-            uut.decode(1)
+        uut = FunctionInspector(self.foo)
+        with self.assertRaisesRegexp(TypeError, "foo\(\) takes no arguments \(1 given\)"):
+            uut.decode_call(1)
 
     def test_ifFunctionDoesNotHaveArgumentOfGivenName_decodeRaisesTypeError(self):
-        uut = MockMethod(self.Interface(), self.Interface.bar)
-        with self.assertRaisesRegexp(TypeError, "Interface.bar\(\) got an unexpected keyword argument 'b'"):
-            uut.decode(b=1)
+        uut = FunctionInspector(self.bar)
+        with self.assertRaisesRegexp(TypeError, "bar\(\) got an unexpected keyword argument 'b'"):
+            uut.decode_call(b=1)
 
     def test_ifDecodeCalledWithTooManyArguments_TypeErrorIsRaised(self):
-        uut = MockMethod(self.Interface(), self.Interface.bar)
-        with self.assertRaisesRegexp(TypeError, "Interface.bar\(\) takes exactly 1 argument \(2 given\)"):
-            uut.decode(1, 2)
-        uut = MockMethod(self.Interface(), self.Interface.baz)
-        with self.assertRaisesRegexp(TypeError, "Interface.baz\(\) takes exactly 2 arguments \(3 given\)"):
-            uut.decode(1, 2, 3)
+        uut = FunctionInspector(self.bar)
+        with self.assertRaisesRegexp(TypeError, "bar\(\) takes exactly 1 argument \(2 given\)"):
+            uut.decode_call(1, 2)
+        uut = FunctionInspector(self.baz)
+        with self.assertRaisesRegexp(TypeError, "baz\(\) takes exactly 2 arguments \(3 given\)"):
+            uut.decode_call(1, 2, 3)
 
     def test_ifDecodeCalledWithTooFewArguments_TypeErrorIsRaised(self):
-        uut = MockMethod(self.Interface(), self.Interface.spam)
-        with self.assertRaisesRegexp(TypeError, "Interface.spam\(\) takes at least 2 arguments \(1 given\)"):
-            uut.decode(1)
+        uut = FunctionInspector(self.spam)
+        with self.assertRaisesRegexp(TypeError, "spam\(\) takes at least 2 arguments \(1 given\)"):
+            uut.decode_call(1)
 
     def test_ifDecodeForFunctionWithDefaultArgsCalledWithTooManyArguments_TypeErrorIsRaised(self):
-        uut = MockMethod(self.Interface(), self.Interface.spam)
-        with self.assertRaisesRegexp(TypeError, "Interface.spam\(\) takes at most 3 arguments \(4 given\)"):
-            uut.decode(1, 2, 3, 4)
+        uut = FunctionInspector(self.spam)
+        with self.assertRaisesRegexp(TypeError, "spam\(\) takes at most 3 arguments \(4 given\)"):
+            uut.decode_call(1, 2, 3, 4)
